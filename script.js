@@ -10,6 +10,8 @@ const startBtn = document.querySelector('.start-btn');
 // game variables
 const width = 10;
 const numCells = width * width;
+const cell_size = `${width * 2}px`;
+const cell_expand = `${width * 2.5}px`;
 grid.style.width = `${width * 10 * 2}px`;
 grid.style.height = `${width * 10 * 2}px`;
 
@@ -39,8 +41,8 @@ const max_defenses = 5;
 // TODO: Make them identifiable (best by row and column!)
 for (let i = 0; i < width * width; i++) {
     const cell = document.createElement('div');
-    cell.style.width = `${width * 2}px`;
-    cell.style.height = `${width * 2}px`;
+    cell.style.width = cell_size;
+    cell.style.height = cell_size;
 
     // Assign a class:
     cell.className = "cell";
@@ -139,7 +141,10 @@ function gameLoop() {
 
     // Clear the previous item:
     if (item_counter > 0) {
-        cells[items_x[item_counter - 1]].style.background = 'blue';  // 'none'.
+        const previous_item = items_x[item_counter - 1];
+        cells[previous_item].style.background = 'none';  // was: 'blue' for display.
+        cells[previous_item].style.height = cell_size;  // 'none'.
+        cells[previous_item].style.width = cell_size;
         // TODO: Here we could have a fancy animation.
     }
 
@@ -148,7 +153,7 @@ function gameLoop() {
         // Start the item:
         item_interval = setInterval(itemLoop, intervalTime);
     } else if (!defenses) {
-        // TODO: Here we would trigger the "set defenses task":
+        // Trigger the "set defenses task":
         startDefenses();
 
         // Show the button:
@@ -172,12 +177,9 @@ function itemLoop() {
 
     // Detect collision:
     const hit_bottom = (currentItem + width >= width * width && direction === width);  // hits bottom wall.
-    let collision = hit_bottom;
+    const hit_defense = defenses_x.includes(currentItem + direction);
 
     if (defenses) {
-        const hit_defense = defenses_x.includes(currentItem + direction);
-
-        collision = hit_bottom || hit_defense;  // hist existing item.
 
         // Remove hit defense from list:
         if (hit_defense) {
@@ -200,11 +202,15 @@ function itemLoop() {
             scoreDisplay.textContent = score;
         }
     }
-    if (collision) {
+    if (hit_bottom || hit_defense) {
         items_x.push(currentItem);  // add the current item to array of positions.
         console.log(items_x);
         grid.classList.add('shake');
         clearInterval(item_interval);
+
+        // Enlarge the item:
+        cells[currentItem].style.height = cell_expand;  // 'none'.
+        cells[currentItem].style.width = cell_expand;
 
         // Run the next item:
         item_interval = setInterval(gameLoop, intervalTime);

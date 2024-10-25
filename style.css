@@ -39,8 +39,12 @@ button {
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
-    border: 1px solid grey;
+    /*border: 1px solid grey;*/
+    /*For enlarging:*/
+    transition: height 20ms;
+    transition: width 20ms;
 }
+
 
 .start-btn {
     position: relative;
