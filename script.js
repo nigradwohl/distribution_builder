@@ -147,13 +147,18 @@ function gameLoop() {
     if (item_counter < max_items) {
         // Start the item:
         item_interval = setInterval(itemLoop, intervalTime);
-    } else {
+    } else if (!defenses) {
         // TODO: Here we would trigger the "set defenses task":
         startDefenses();
 
         // Show the button:
         // startBtn.style.display = "block";
         // startBtn.addEventListener('click', startGame);
+    } else {
+        // Hide everything and show "Finished":
+        startBtn.style.display = "none";
+        grid.style.display = "none";
+        document.getElementById("finished").textContent = "Finished!";
     }
 
 
