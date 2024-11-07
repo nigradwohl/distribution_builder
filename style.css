@@ -29,9 +29,10 @@ button {
 .grid {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: row;
     border: 2px solid var(--color-border);
     min-height: 200px;
-    min-width: 200px;
+    min-width: 930px;
 }
 
 .cell {

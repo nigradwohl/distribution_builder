@@ -8,12 +8,14 @@ const startBtn = document.querySelector('.start-btn');
 
 
 // game variables
-const width = 10;
-const numCells = width * width;
-const cell_size = `${width * 2}px`;
-const cell_expand = `${width * 2.5}px`;
-grid.style.width = `${width * 10 * 2}px`;
-grid.style.height = `${width * 10 * 2}px`;
+const height = 10;
+const width = 31;
+const cell_fact = 3;
+const numCells = width * height;
+const cell_size = `${10 * cell_fact}px`;
+const cell_expand = `${10 * (cell_fact + 0.2)}px`;
+grid.style.width = `${width * 10 * cell_fact}px`;
+grid.style.height = `${height * 10 * cell_fact}px`;
 
 let score = 0;
 let max_items = 10;
@@ -34,12 +36,12 @@ let defenses = false;  // defenses part of the game.
 // Save item positions:
 let items_x = [];
 let defenses_x = [];
-const max_defenses = 5;
+const max_defenses = 10;
 
 
 // create grid cells
 // TODO: Make them identifiable (best by row and column!)
-for (let i = 0; i < width * width; i++) {
+for (let i = 0; i < width * height; i++) {
     const cell = document.createElement('div');
     cell.style.width = cell_size;
     cell.style.height = cell_size;
@@ -176,7 +178,7 @@ function itemLoop() {
     cells[currentItem].innerText = '';  // likely not needed.
 
     // Detect collision:
-    const hit_bottom = (currentItem + width >= width * width && direction === width);  // hits bottom wall.
+    const hit_bottom = (currentItem + width >= width * height && direction === width);  // hits bottom wall.
     const hit_defense = defenses_x.includes(currentItem + direction);
 
     if (defenses) {
