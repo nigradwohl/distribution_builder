@@ -179,6 +179,13 @@ function gameLoop() {
         // Hide everything and show "Finished":
         startBtn.style.display = "none";
         // grid.style.display = "none";
+
+        // Remove event listeners after game:
+        cells.forEach(cix => {
+
+            cix.removeEventListener('click', toggleDefense);  // disable toggling class.
+        });
+
         document.getElementById("finished").textContent = "Finished!";
     }
 
