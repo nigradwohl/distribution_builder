@@ -29,7 +29,11 @@ const pos_array = [1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6]
 let currentItem = 0;
 
 let direction = width;  // corresponds to downward movement.
-let intervalTime_learn = 200; // determines speed - frequency of game loop calls
+const intervalTime_learn = 200; // determines speed - frequency of game loop calls
+const intervalTime_test = 70;  // for testing speed up
+let intervalTime = intervalTime_learn;
+// (may be combined with narrative: before you could click the blocks, now they will come too fast, so you must set up defenses)
+// TODO: Maybe make blocks clickable during flight to make the game more engaging in the learning phase!)
 let game_interval = 0;
 let item_interval = 0;
 
@@ -174,7 +178,7 @@ function gameLoop() {
     } else {
         // Hide everything and show "Finished":
         startBtn.style.display = "none";
-        grid.style.display = "none";
+        // grid.style.display = "none";
         document.getElementById("finished").textContent = "Finished!";
     }
 
@@ -255,6 +259,7 @@ function startDefenses() {
 
     defenses = true;  // set the defenses task to true.
     max_items = 5;
+    intervalTime = intervalTime_test;
 
 }
 
