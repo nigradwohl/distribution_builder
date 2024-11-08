@@ -17,6 +17,8 @@ const cell_expand = `${10 * (cell_fact + 0.2)}px`;
 grid.style.width = `${width * 10 * cell_fact}px`;
 grid.style.height = `${height * 10 * cell_fact}px`;
 
+const persistent_items = true;  // Should items remain visible?
+
 let score = 0;
 let max_items = 10;
 let item_counter = 0;
@@ -27,7 +29,7 @@ const pos_array = [1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6]
 let currentItem = 0;
 
 let direction = width;  // corresponds to downward movement.
-let intervalTime = 200; // determines speed - frequency of game loop calls
+let intervalTime_learn = 200; // determines speed - frequency of game loop calls
 let game_interval = 0;
 let item_interval = 0;
 
@@ -82,13 +84,16 @@ function startGame() {
     item_counter = 0;
     items_x = [];
 
-    if (!defenses) {
-        cells.forEach(cix => {
+    cells.forEach(cix => {
+        // Clear all that are not defenses:
+        if (!cix.classList.contains("defense")) {
             cix.style.background = 'none';
-            cix.classList.remove('item');
             cix.innerText = '';
-        });
-    }
+        }
+
+        cix.classList.remove('item');  // clear the item class for all.
+
+    });
 
     // Show score:
     scoreDisplay.textContent = score;
@@ -143,8 +148,13 @@ function gameLoop() {
 
     // Clear the previous item:
     if (item_counter > 0) {
-        const previous_item = items_x[item_counter - 1];
-        cells[previous_item].style.background = 'none';  // was: 'blue' for display.
+
+        const previous_item = items_x[item_counter - 1];  // get index of previous item.
+        if (!persistent_items || defenses) {  // when items are not persistet or defenses have been set.
+            cells[previous_item].style.background = 'none';  // was: 'blue' for display.
+        } else {
+            cells[previous_item].style.background = 'blue';  // make persistent items blue.
+        }
         cells[previous_item].style.height = cell_size;  // 'none'.
         cells[previous_item].style.width = cell_size;
         // TODO: Here we could have a fancy animation.
@@ -178,7 +188,9 @@ function itemLoop() {
     cells[currentItem].innerText = '';  // likely not needed.
 
     // Detect collision:
-    const hit_bottom = (currentItem + width >= width * height && direction === width);  // hits bottom wall.
+    const hit_bottom = (currentItem + width >= width * height && direction === width) ||
+        (items_x.includes(currentItem + direction) && persistent_items && !defenses);
+    // hits bottom wall (or other item, if persistent and not the defense, phase!).
     const hit_defense = defenses_x.includes(currentItem + direction);
 
     if (defenses) {
@@ -233,18 +245,17 @@ function itemLoop() {
 
 function startDefenses() {
     cells.forEach(cix => {
-        cix.style.background = 'none';
-        cix.classList.remove('item');
-        cix.innerText = '';
-        cix.addEventListener('click', toggleDefense);
+        if (!persistent_items) {
+            cix.style.background = 'none';
+            cix.classList.remove('item');
+            cix.innerText = '';
+        }
+        cix.addEventListener('click', toggleDefense);  // allow toggling class.
     });
 
     defenses = true;  // set the defenses task to true.
     max_items = 5;
 
-    // Show the start button again:
-    startBtn.style.display = "block";
-    startBtn.addEventListener('click', startGame);
 }
 
 
@@ -265,7 +276,11 @@ function toggleDefense() {
             // Save ID to array:
             defenses_x.push(cell_id);
         } else {
-            this.style.backgroundColor = "white";
+            if (this.classList.contains("item")) {
+                this.style.backgroundColor = "blue";  // if it was a persistent item.
+            } else {
+                this.style.backgroundColor = "white";
+            }
 
             // Remove ID:
             const ix_def = defenses_x.indexOf(cell_id);
@@ -275,6 +290,9 @@ function toggleDefense() {
         }
     } else {
         // TODO: If no more defenses left, oputput a mesage!
+        // Show the start button again:
+        startBtn.style.display = "block";
+        startBtn.addEventListener('click', startGame);
     }
 
 
