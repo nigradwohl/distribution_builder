@@ -19,6 +19,8 @@ grid.style.height = `${height * 10 * cell_fact}px`;
 
 const persistent_items = true;  // Should items remain visible?
 
+let previous_hit = false;
+
 let score = 0;
 let max_items = 10;
 let item_counter = 0;
@@ -28,7 +30,7 @@ const pos_array = [1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6]
 
 let currentItem = 0;
 
-let direction = width;  // corresponds to downward movement.
+let direction = width;  // corresponds to downward movement, since a full row is skipped.
 const intervalTime_learn = 200; // determines speed - frequency of game loop calls
 const intervalTime_test = 70;  // for testing speed up
 let intervalTime = intervalTime_learn;
@@ -151,7 +153,7 @@ function gameLoop() {
     // });
 
     // Clear the previous item:
-    if (item_counter > 0) {
+    if (item_counter > 0 && !previous_hit) {
 
         const previous_item = items_x[item_counter - 1];  // get index of previous item.
         if (!persistent_items || defenses) {  // when items are not persistet or defenses have been set.
@@ -163,6 +165,8 @@ function gameLoop() {
         cells[previous_item].style.width = cell_size;
         // TODO: Here we could have a fancy animation.
     }
+
+    previous_hit = false;  // reset flag.
 
     // Check if all items have fallen:
     if (item_counter < max_items) {
@@ -237,6 +241,9 @@ function itemLoop() {
         cells[currentItem].style.height = cell_expand;  // 'none'.
         cells[currentItem].style.width = cell_expand;
 
+        // Remove listener for clicking:
+        cells[currentItem].removeEventListener('click', remove_item);
+
         // Run the next item:
         item_interval = setInterval(gameLoop, intervalTime);
         item_counter++;
@@ -248,10 +255,15 @@ function itemLoop() {
     // Move the item through the grid:
     cells[currentItem].classList.remove('item');
     cells[currentItem].style.background = 'none';
+    cells[currentItem].removeEventListener('click', remove_item);  // remove previous event listener.
     currentItem += direction; // adds the direction to the item.
     // Style the new positions:
     cells[currentItem].classList.add('item');
     cells[currentItem].style.background = 'red';
+
+    // Add event listener to remove the item:
+    cells[currentItem].addEventListener('click', remove_item);
+
 }
 
 function startDefenses() {
@@ -270,6 +282,32 @@ function startDefenses() {
 
 }
 
+
+/*
+Shooting items:
+ */
+function remove_item() {
+    this.style.backgroundColor = "green";  // for now only change color.
+
+    grid.classList.add('shake');
+    clearInterval(item_interval);
+
+    // Enlarge the item:
+    cells[currentItem].style.height = cell_expand;  // 'none'.
+    cells[currentItem].style.width = cell_expand;
+
+    // Remove listener:
+    cells[currentItem].removeEventListener('click', remove_item);
+    cells[currentItem].classList.remove('item');  // remove class.
+
+    // Run the next item:
+    item_interval = setInterval(gameLoop, intervalTime);
+    // item_counter++;  // DO NOT INCREMENT COUNTER HERE!
+
+    previous_hit = true;  // set hit flag.
+
+
+}
 
 /*
  Adding defenses:
