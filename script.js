@@ -133,6 +133,10 @@ function gameLoop() {
 
     grid.classList.remove('shake');
 
+    // Reset item size:
+    cells[currentItem].style.height = cell_size;  // 'none'.
+    cells[currentItem].style.width = cell_size;
+
     // currentItem = 0;
     currentItem = randomElementFromArray(pos_array);   // Randomly draw initial position.
 
