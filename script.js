@@ -256,12 +256,13 @@ function itemLoop() {
     cells[currentItem].classList.remove('item');
     cells[currentItem].style.background = 'none';
     cells[currentItem].removeEventListener('click', remove_item);  // remove previous event listener.
+
+    // New item:
     currentItem += direction; // adds the direction to the item.
     // Style the new positions:
     cells[currentItem].classList.add('item');
     cells[currentItem].style.background = 'red';
-
-    // Add event listener to remove the item:
+    // Add event listener to remove the new item:
     cells[currentItem].addEventListener('click', remove_item);
 
 }
