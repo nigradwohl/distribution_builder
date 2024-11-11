@@ -246,6 +246,8 @@ function itemLoop() {
         cells[currentItem].style.width = cell_expand;
 
         // Remove listener for clicking:
+        // Remove from the one before!
+        cells[currentItem - direction].removeEventListener('click', remove_item);
         cells[currentItem].removeEventListener('click', remove_item);
 
         // Run the next item:
@@ -259,7 +261,11 @@ function itemLoop() {
     // Move the item through the grid:
     cells[currentItem].classList.remove('item');
     cells[currentItem].style.background = 'none';
-    cells[currentItem].removeEventListener('click', remove_item);  // remove previous event listener.
+    // cells[currentItem].removeEventListener('click', remove_item);  // remove previous event listener.
+    if(currentItem > direction){
+        cells[currentItem - direction].removeEventListener('click', remove_item);
+    }
+
 
     // New item:
     currentItem += direction; // adds the direction to the item.
@@ -292,7 +298,7 @@ function startDefenses() {
 Shooting items:
  */
 function remove_item() {
-    this.style.backgroundColor = "green";  // for now only change color.
+    cells[currentItem].style.backgroundColor = "green";  // for now only change color.
 
     grid.classList.add('shake');
     clearInterval(item_interval);
@@ -307,7 +313,7 @@ function remove_item() {
 
     // Run the next item:
     item_interval = setInterval(gameLoop, intervalTime);
-    // item_counter++;  // DO NOT INCREMENT COUNTER HERE!
+    item_counter++;  // DO NOT INCREMENT COUNTER HERE!
 
     previous_hit = true;  // set hit flag.
 
