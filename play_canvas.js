@@ -7,13 +7,13 @@
     // canvas.style.backgroundColor = 'black';
 
     'use strict';
-    const c = document.getElementById('canvas');
+    const c = document.getElementById('hit-layer');
     // var t = document.getElementById('t');
     const ctx = c.getContext('2d');
     // Set width of canvas:
     const w = c.width = 400;  // window.innerWidth;
     const h = c.height = 400;  // window.innerHeight;
-    c.style.backgroundColor = 'black';
+    // c.style.backgroundColor = 'black';
     // Fixed values ensure equal height and width of points.
 
     const target_wd = 20;  // width of targets.
@@ -30,20 +30,15 @@
     // Add balls to the list and give them their direction:
     for (var i = 0; i < total; i++) {
 
-        // Task with random and cohesive dots:
-        // Determine any 360 deg angle in radians (for noise, otherwise: y-error up to +-45 deg = pi/4):
-        let dot_angle = (i < noise) ? Math.random() * Math.PI * 2 : (Math.random() - 0.5) * Math.PI / 2;
-        // (Math.random() - 0.5) * Math.PI/2 is +- 45 deg!
-
         balls.push({
             // Initiate random positions:
             x: Math.random() * w,
-            y: Math.random() * h,
+            y: 0, // Math.random() * h,
 
-            vx: ((i < noise) ? Math.cos(dot_angle) : (dot_right * (1 - Math.sin(dot_angle) ** 2))) * 1,
+            vx: 0,
             // subtract the squared angle, to obtain a speed of 1:
             // subtract Math.sin(dot_angle)**2 (then adjust dir!)!
-            vy: Math.sin(dot_angle) * 1, // Math.sin(Math.random() * Math.PI/4),
+            vy: 2, // Math.sin(Math.random() * Math.PI/4),
             // Set latter to 0 to have no degree error.
             // Increase speed through multiplication!
             col: "rgb(255,255,255)",
@@ -82,18 +77,13 @@
         var i, dot;
         for (i = 0; i < total; i++) {
             dot = balls[i];
-            dot.x += dot.vx;
-            dot.y += dot.vy;
-            // Behavior at the edges:
-            if (dot.x > w) {
-                dot.x = 0;
-            } else if (dot.x < 0) {
-                dot.x = w;
-            }
-            if (dot.y > h) {
-                dot.y = 0;
-            } else if (dot.y < 0) {
-                dot.y = h;
+            // Stop updating
+            // TODO: Make sensitive to still visible elements!
+            // Get all dots on the corresponding x position and obtain the largest y-position among them!
+
+            if (dot.y < h - target_wd) {
+                dot.y += dot.vy;
+                // TODO: Set inactive; maybe on second canvas?
             }
             // }
         }
@@ -103,16 +93,16 @@
     // loop the animation
     requestAnimationFrame(function loop() {
         requestAnimationFrame(loop);
-        // update();
+        update();
         draw();
     });
 
     // Add mouse stuff:
     let click = false;  // TODO: Needed?
-    let boundingBox = canvas.getBoundingClientRect();
+    let boundingBox = c.getBoundingClientRect();
     const mouse = {
-        x: canvas.width / 2,
-        y: canvas.height / 2
+        x: c.width / 2,
+        y: c.height / 2
     };
 
     document.addEventListener("mousedown", (e) => {

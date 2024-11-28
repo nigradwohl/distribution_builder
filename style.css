@@ -26,6 +26,11 @@ p {
     padding-top: 1em;
 }
 
+#game-container{
+    height: 400px;
+    width: 400px;
+}
+
 button {
     cursor: pointer;
 }
