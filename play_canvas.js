@@ -22,14 +22,17 @@
 
     const target_wd = 20;  // width of targets.
 
-    const bins_w = Array.from({length: w / target_wd}, (_, i) => target_wd / 2 + target_wd * i);  // w / target_wd;  // TODO: Move up.
-    const bins_v = Array.from({length: h / target_wd}, (_, i) => target_wd / 2 + target_wd * i);  // w / target_wd;  // TODO: Move up.
+    const bins_w = Array.from({length: w / target_wd}, (_, i) => target_wd + target_wd * i);  // w / target_wd;  // TODO: Move up.
+    const bins_v = Array.from({length: h / target_wd}, (_, i) => target_wd + target_wd * i);  // w / target_wd;  // TODO: Move up.
 
 // current dots
     let balls = [];
     let active_balls = [];
     let finished_balls = [];
     let def_balls = [];
+
+    let finished_x = new Array(bins_w.length).fill(h - target_wd);
+
     // var total = js_vars.n_dots;  // number of balls.
     // var noise = js_vars.dot_noise * total; // number of noise balls (t gives the fraction!)
     let total = 40;
@@ -48,10 +51,11 @@
             vx: 0,  // x velocity.
             // subtract the squared angle, to obtain a speed of 1:
             // subtract Math.sin(dot_angle)**2 (then adjust dir!)!
-            vy: 2, // Math.sin(Math.random() * Math.PI/4),
+            // y-velocity (falling speed):
+            vy: 8, // Math.sin(Math.random() * Math.PI/4),
             // Set latter to 0 to have no degree error.
             // Increase speed through multiplication!
-            col: "rgb(255,255,255)",
+            col: "rgb(180,180,180)",
 
         })
 
@@ -92,27 +96,37 @@
 // movement function
     function update() {
         var i, dot;
+        // TODO: active_balls appears to be a moving target which causes problems!
         for (i = 0; i < active_balls.length; i++) {
             dot = active_balls[i];
             // Stop updating
             // TODO: Make sensitive to still visible elements!
             // Get all dots on the corresponding x position and obtain the largest y-position among them!
 
-            if (dot.y < h - target_wd) {
+            // Check among finished balls for
+
+            // if (dot.y < h - target_wd && dot.y < finished_x[bins_w.indexOf(dot.x)]) {
+            if (dot.y < finished_x[bins_w.indexOf(dot.x)]) {
                 dot.y += dot.vy;
             } else {
                 // For final dot:
                 // Remove dot from active:
                 const landed = active_balls.splice(i, 1);
-                // Set inactive on second canvas?
+                console.log(landed);
+                // Set inactive on second canvas:
                 finished_balls = finished_balls.concat(landed);  // Add ball to finished balls.
                 draw(ctx_fin, finished_balls);
+                // Update location count:
+                // TODO: Only do so if targets are persistent!
+                finished_x[bins_w.indexOf(landed[0].x)] -= target_wd;
                 console.log("Finished balls:");
                 console.log(finished_balls);
+                console.log(finished_x);  // Show finish locations.
             }
 
             // Add a new ball after the half:
-            if (dot.y === h / 2) {
+            // if (dot.y === h / 2) {
+            if (dot.y === h - 2 * target_wd) {  // or later.
                 if (balls.length > 0) {  // If enough balls are left.
                     // Check if balls are left:
                     console.log(balls);
@@ -163,16 +177,17 @@
         const pad_hitzone = 5;  // Padding of the hitzone.
 
         // TODO: Ensure that the current ball is targeted!
-        console.log(`Current difference: ${Math.abs(mouse.x - balls[0].x)}; Tolerance: ${pad_hitzone + target_wd / 2}`);
+        // console.log(`Current difference: ${Math.abs(mouse.x - balls[0].x)}; Tolerance: ${pad_hitzone + target_wd / 2}`);
 
         // Check all active balls:
         let ixb;
         let ball_updated = false;
+        const tol = (pad_hitzone + target_wd / 2);  // tolerance.
         for (ixb = 0; ixb < active_balls.length; ixb++) {
-            if (Math.abs(mouse.x - active_balls[ixb].x) <= (pad_hitzone + target_wd / 2) &&
-                Math.abs(mouse.y - active_balls[ixb].y) <= (pad_hitzone + target_wd / 2)) {
+            if (Math.abs(mouse.x - active_balls[ixb].x) <= tol &&
+                Math.abs(mouse.y - active_balls[ixb].y) <= tol) {
                 console.log("Change ball!");
-                balls[ixb].col = "rgb(155,55,255)";  // Define a new color for the ball!
+                active_balls[ixb].col = "rgb(155,55,255)";  // Define a new color for the ball!
                 draw(ctx_hit, active_balls);  // DO the updating!
                 ball_updated = true;
             }
