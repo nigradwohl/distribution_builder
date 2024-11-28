@@ -22,6 +22,10 @@ body {
     height: 100vh;
 }
 
+p {
+    padding-top: 1em;
+}
+
 button {
     cursor: pointer;
 }

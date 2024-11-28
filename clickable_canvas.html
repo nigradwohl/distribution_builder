@@ -5,7 +5,7 @@
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <!--    <link rel="stylesheet" href="style.css"/>-->
+    <link rel="stylesheet" href="style.css"/>
     <!--    <script src="script.js" type="module" defer></script>-->
     <script src="play_canvas.js" type="module" defer></script>
     <title>Distribution builder</title>
@@ -22,20 +22,42 @@
 
 <body>
 
-<button class="start-btn" data-content="Start">Start</button>
+<div class="info">
 
-<div id="finished"></div>
+    <p>
+        <strong>Phase 1</strong>
+    </p>
+    <ul>
+        <li>
+            You can approach the customer to give them a brochure before they enter the checkout line.
+            But pay attention, where they check out, because later there wil be many customers coming.
+        </li>
+        <li>
+            You can shoot the falling meteor to make it.
+            But pay attention, where they land, because there is a meteor shower approaching and the knowledge might
+            help
+            you to set up defenses.
+        </li>
+    </ul>
 
-<div class="score">Score: <span>0</span></div>
+</div>
 
-<!--The container for the grid-->
-<canvas id="canvas"></canvas>
+<div>
+
+    <button class="start-btn" data-content="Start">Start</button>
+
+    <div id="finished"></div>
+
+    <div class="score">Score: <span>0</span></div>
+
+    <!--The container for the grid-->
+    <canvas id="canvas"></canvas>
+
+</div>
 
 <!--TODO: Add buttons below the grid (an additional row) to set defenses.-->
 
 </body>
-
-
 
 
 </html>
