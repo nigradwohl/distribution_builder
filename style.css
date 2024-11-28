@@ -26,7 +26,12 @@ p {
     padding-top: 1em;
 }
 
-#game-container{
+#game-container {
+    height: 400px;
+    width: 400px;
+}
+
+canvas {
     height: 400px;
     width: 400px;
 }
