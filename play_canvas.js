@@ -35,7 +35,7 @@
 
     // var total = js_vars.n_dots;  // number of balls.
     // var noise = js_vars.dot_noise * total; // number of noise balls (t gives the fraction!)
-    let total = 40;
+    let total = 100;
     const noise = 0;
     const dot_right = true;
     // console.log("current noise: " + noise);
@@ -52,10 +52,15 @@
             // subtract the squared angle, to obtain a speed of 1:
             // subtract Math.sin(dot_angle)**2 (then adjust dir!)!
             // y-velocity (falling speed):
-            vy: 2, // Math.sin(Math.random() * Math.PI/4),
+            vy: 10, // Math.sin(Math.random() * Math.PI/4),
+            // Speed is not necessarily the problem but how well it maps onto the pixels!
+            // 10 works, 4 works, 2 works...
+            // 380/8, for instance does not work
             // Set latter to 0 to have no degree error.
             // Increase speed through multiplication!
             col: "rgb(180,180,180)",
+            triggered_new: false,
+            dnum: i.toString(),  // dot number for debugging.
 
         })
 
@@ -88,6 +93,13 @@
             ctx.fill();
             // ctx.strokeStyle = 'black';  // stroke for those with noise.
             // (j < noise) ? ctx.stroke() : '';
+
+            // Add text (for debugging):
+            ctx.font = "14px Arial";
+            ctx.fillStyle = "black";
+            ctx.textBaseline = "middle";  // vertical
+            ctx.textAlign = "center";  // horizontal
+            ctx.fillText(dot.dnum,dot.x + target_wd/2, dot.y + target_wd/2);
         }
 
     }
@@ -104,8 +116,8 @@
             // Get all dots on the corresponding x position and obtain the largest y-position among them!
 
             // Check among finished balls for
-            const n_xbin = finished_x[bins_w.indexOf(dot.x)];
-            console.log(`Bin of current dots already has targets until ${n_xbin}`);
+            const n_xbin = finished_x[bins_w.indexOf(dot.x)];  // Deterine up to which position targets are filled.
+            // console.log(`Bin of current dots already has targets until ${n_xbin}`);
 
             // if (dot.y < h - target_wd && dot.y < finished_x[bins_w.indexOf(dot.x)]) {
             if (dot.y < n_xbin) {
@@ -130,7 +142,7 @@
             // Add a new ball after the half:
             // if (dot.y === h / 2) {
             // if (dot.y === h - 2 * target_wd - n_xbin) {  // or later.
-            if (dot.y === n_xbin - 2 * target_wd) {  // or later.
+            if (dot.y >= n_xbin - 2 * target_wd && !dot.triggered_new) {  // or later.
                 if (balls.length > 0) {  // If enough balls are left.
                     // Check if balls are left:
                     console.log(balls);
@@ -139,6 +151,7 @@
                     console.log(newball);
                     // active_balls.push(balls[i + 1]);  // Add the next ball -- does not work this way, because the index stays the same..
                     active_balls.push(newball);  // Add the next ball.
+                    dot.triggered_new = true;
 
                     console.log(active_balls);
                 }
