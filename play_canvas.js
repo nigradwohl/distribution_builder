@@ -52,7 +52,7 @@
             // subtract the squared angle, to obtain a speed of 1:
             // subtract Math.sin(dot_angle)**2 (then adjust dir!)!
             // y-velocity (falling speed):
-            vy: 8, // Math.sin(Math.random() * Math.PI/4),
+            vy: 2, // Math.sin(Math.random() * Math.PI/4),
             // Set latter to 0 to have no degree error.
             // Increase speed through multiplication!
             col: "rgb(180,180,180)",
@@ -104,9 +104,12 @@
             // Get all dots on the corresponding x position and obtain the largest y-position among them!
 
             // Check among finished balls for
+            const n_xbin = finished_x[bins_w.indexOf(dot.x)];
+            console.log(`Bin of current dots already has targets until ${n_xbin}`);
 
             // if (dot.y < h - target_wd && dot.y < finished_x[bins_w.indexOf(dot.x)]) {
-            if (dot.y < finished_x[bins_w.indexOf(dot.x)]) {
+            if (dot.y < n_xbin) {
+                // If dot has not finsihed, add its velocity
                 dot.y += dot.vy;
             } else {
                 // For final dot:
@@ -126,7 +129,8 @@
 
             // Add a new ball after the half:
             // if (dot.y === h / 2) {
-            if (dot.y === h - 2 * target_wd) {  // or later.
+            // if (dot.y === h - 2 * target_wd - n_xbin) {  // or later.
+            if (dot.y === n_xbin - 2 * target_wd) {  // or later.
                 if (balls.length > 0) {  // If enough balls are left.
                     // Check if balls are left:
                     console.log(balls);
