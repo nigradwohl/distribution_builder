@@ -39,6 +39,23 @@
 
     let finished_x = new Array(bins_w.length).fill(h - target_ht);
 
+    // Build a distribution:
+
+    // Limited range of bins
+    const binrange = bins_w.slice(20, 23);  // Select some bins.
+
+    // Normal distribution between 0 and 1 (may fail!)
+    // https://stackoverflow.com/questions/25582882/javascript-math-random-normal-distribution-gaussian-bell-curve
+    function randn_bm(m, f) {
+        let u = 0, v = 0;
+        while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+        while (v === 0) v = Math.random();
+        let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        num = num / f + m; // Translate to 0 -> 1
+        if (num > 1 || num < 0) return randn_bm() // resample between 0 and 1
+        return num
+    }
+
     // var total = js_vars.n_dots;  // number of balls.
     // var noise = js_vars.dot_noise * total; // number of noise balls (t gives the fraction!)
     let total = 100;
@@ -51,8 +68,12 @@
 
         balls.push({
             // Initiate random positions:
-            // x: Math.random() * w,
-            x: bins_w[Math.floor(Math.random() * bins_w.length)],
+            // x: Math.random() * w,  // Continuous range
+            // x: bins_w[Math.floor(Math.random() * bins_w.length)],  // Full range.
+            // x: binrange[Math.floor(Math.random() * binrange.length)],  //
+            x: bins_w[Math.floor(randn_bm(0.3, 30) * bins_w.length)],
+            // full range sampled from normal, mean 0.2 of range, second number makes more narrow.
+
             y: 0, // Math.random() * h,
             vx: 0,  // x velocity.
             // subtract the squared angle, to obtain a speed of 1:
