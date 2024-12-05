@@ -116,7 +116,7 @@
             // subtract the squared angle, to obtain a speed of 1:
             // subtract Math.sin(dot_angle)**2 (then adjust dir!)!
             // y-velocity (falling speed):
-            vy: 20, // Math.sin(Math.random() * Math.PI/4),
+            vy: 10, // Math.sin(Math.random() * Math.PI/4),
             // Speed is not necessarily the problem but how well it maps onto the pixels!
             // 10 works, 4 works, 2 works...
             // 380/8, for instance does not work
@@ -260,7 +260,6 @@
     }
 
 
-
     function draw_triangle(x_start) {
 
         console.log(x_start);
@@ -299,6 +298,18 @@
                 console.log(caught);
                 // Set inactive on second canvas:
                 hit_defenses = hit_defenses.concat(caught);  // Add ball to finished balls.
+                defenses_x[bins_w.indexOf(dot.x)] += target_ht;  // Change defenses.
+
+                // TODO: Remove visible defense!
+                // Remove most recent def_balls from array!
+                const pos_ix = def_balls.findLastIndex(function(cur){
+                    return cur.x === dot.x
+                })
+
+                def_balls.splice(pos_ix, 1);
+
+                console.log("Position indices");
+                console.log(pos_ix);
 
                 console.log("Finished balls:");
                 console.log(hit_defenses);
@@ -309,7 +320,8 @@
             // if (dot.y === h / 2) {
             // if (dot.y === h - 2 * target_ht - n_xbin) {  // or later.
             if (dot.y >= n_xbin - 2 * target_ht && !dot.triggered_new) {  // or later.
-                if (balls.length > 0) {  // If enough balls are left.
+                console.log(testballs);
+                if (testballs.length > 0) {  // If enough balls are left.
                     // Check if balls are left:
                     console.log(testballs);
                     const newball = testballs.shift();  // Get first of remaining balls.
@@ -326,7 +338,6 @@
             // }
         }
     }
-
 
 
     document.getElementById("start-btn").addEventListener("click", function () {
@@ -456,6 +467,9 @@
                     if (ndef === 0) {
                         alert("Click to start testing your predictions!");
 
+                        firstball = testballs.shift();
+                        active_balls.push(firstball);
+
                         requestAnimationFrame(function loop() {
                             // As long as there are active balls:
                             if (active_balls.length > 0) {
@@ -463,6 +477,7 @@
                                 update_testballs();
                                 // Draw the active balls:
                                 draw(ctx_hit, active_balls);
+                                draw(ctx_def, def_balls);
                             }
 
                         });
