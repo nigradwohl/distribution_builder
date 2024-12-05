@@ -24,6 +24,8 @@
     const target_wd = target_ht;
     const circle = false;
 
+    const persistent = true;
+
     // For circles:
     const addconst = circle ? target_ht / 2 : 0;
     const bins_w = Array.from({length: w / target_wd}, (_, i) => addconst + target_wd * i);  // w / target_ht;
@@ -156,10 +158,14 @@
                 console.log(landed);
                 // Set inactive on second canvas:
                 finished_balls = finished_balls.concat(landed);  // Add ball to finished balls.
-                draw(ctx_fin, finished_balls);
-                // Update location count:
-                // TODO: Only do so if targets are persistent!
-                finished_x[bins_w.indexOf(landed[0].x)] -= target_ht;
+
+                // Draw on background if persistent:
+                if (persistent) {
+                    draw(ctx_fin, finished_balls);
+                    // Update location count:
+                    finished_x[bins_w.indexOf(landed[0].x)] -= target_ht;
+                }
+
                 console.log("Finished balls:");
                 console.log(finished_balls);
                 console.log(finished_x);  // Show finish locations.
