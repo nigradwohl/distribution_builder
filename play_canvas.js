@@ -21,9 +21,9 @@
     // Fixed values ensure equal height and width of points.
 
     const target_ht = 20;  // height of targets.
-    const target_wd = target_ht * h/w;
+    const target_wd = target_ht * h / w;
 
-    const bins_w = Array.from({length: w / target_wd}, (_, i) => target_wd + target_wd * i);  // w / target_ht;  // TODO: Move up.
+    const bins_w = Array.from({length: w / target_wd}, (_, i) => target_wd/2 + target_wd * i);  // w / target_ht;  // TODO: Move up.
     const bins_v = Array.from({length: h / target_ht}, (_, i) => target_ht + target_ht * i);  // w / target_ht;  // TODO: Move up.
 
 // current dots
@@ -47,7 +47,7 @@
         balls.push({
             // Initiate random positions:
             // x: Math.random() * w,
-            x: bins_w[Math.floor(Math.random()*bins_w.length)],
+            x: bins_w[Math.floor(Math.random() * bins_w.length)],
             y: 0, // Math.random() * h,
             vx: 0,  // x velocity.
             // subtract the squared angle, to obtain a speed of 1:
@@ -100,7 +100,7 @@
             ctx.fillStyle = "black";
             ctx.textBaseline = "middle";  // vertical
             ctx.textAlign = "center";  // horizontal
-            ctx.fillText(dot.dnum,dot.x + target_wd/2, dot.y + target_ht/2);
+            ctx.fillText(dot.dnum, dot.x + target_wd / 2, dot.y + target_ht / 2);
         }
 
     }
@@ -184,71 +184,76 @@
     };
 
     document.addEventListener("mousedown", (e) => {
-        console.log(boundingBox);
-        mouse.x = e.clientX - boundingBox.left;
-        mouse.y = e.clientY - boundingBox.top;
+        if (e.buttons === 1) {  // only for left mouse button!
+            console.log(boundingBox);
+            mouse.x = e.clientX - boundingBox.left;
+            mouse.y = e.clientY - boundingBox.top;
 
-        console.log(mouse);
-        console.log(active_balls);
+            // TODO: Check if mouse is within canvas!
 
-        // Add a bit of padding:
-        const pad_hitzone = 5;  // Padding of the hitzone.
+            console.log(mouse);
+            console.log(active_balls);
 
-        // TODO: Ensure that the current ball is targeted!
-        // console.log(`Current difference: ${Math.abs(mouse.x - balls[0].x)}; Tolerance: ${pad_hitzone + target_ht / 2}`);
+            // Add a bit of padding:
+            const pad_hitzone = 5;  // Padding of the hitzone.
 
-        // Check all active balls:
-        let ixb;
-        let ball_updated = false;
-        const tol = (pad_hitzone + target_ht / 2);  // tolerance.
-        for (ixb = 0; ixb < active_balls.length; ixb++) {
-            if (Math.abs(mouse.x - active_balls[ixb].x) <= tol &&
-                Math.abs(mouse.y - active_balls[ixb].y) <= tol) {
-                console.log("Change ball!");
-                active_balls[ixb].col = "rgb(155,55,255)";  // Define a new color for the ball!
-                draw(ctx_hit, active_balls);  // DO the updating!
-                ball_updated = true;
+            // TODO: Ensure that the current ball is targeted!
+            // console.log(`Current difference: ${Math.abs(mouse.x - balls[0].x)}; Tolerance: ${pad_hitzone + target_ht / 2}`);
+
+            // Check all active balls:
+            let ixb;
+            let ball_updated = false;
+            const tol = (pad_hitzone + target_ht / 2);  // tolerance.
+            for (ixb = 0; ixb < active_balls.length; ixb++) {
+                if (Math.abs(mouse.x - active_balls[ixb].x) <= tol &&
+                    Math.abs(mouse.y - active_balls[ixb].y) <= tol) {
+                    console.log("Change ball!");
+                    active_balls[ixb].col = "rgb(155,55,255)";  // Define a new color for the ball!
+                    draw(ctx_hit, active_balls);  // DO the updating!
+                    ball_updated = true;
+                }
             }
+
+            // If no ball was updated:
+            if (!ball_updated) {
+                console.log("No balls updated -- will create one");
+                // Add a ball (currently for demonstration only):
+                // let dot_angle = (i < noise) ? Math.random() * Math.PI * 2 : (Math.random() - 0.5) * Math.PI / 2;
+
+                // Ensure bins:
+                console.log(bins_w);
+                const xpos = bins_w.reduce(function (prev, curr) {
+                    return (Math.abs(curr - mouse.x) < Math.abs(prev - mouse.x) ? curr : prev);
+                });
+                const ypos = bins_v.reduce(function (prev, curr) {
+                    return (Math.abs(curr - mouse.y) < Math.abs(prev - mouse.y) ? curr : prev);
+                });
+
+                def_balls.push({
+                    // Initiate at mouse position:
+                    // x: mouse.x,
+                    // y: mouse.y,
+                    x: xpos,
+                    y: ypos,
+
+                    // vx: ((i < noise) ? Math.cos(dot_angle) : (dot_right * (1 - Math.sin(dot_angle) ** 2))) * 1,
+                    // subtract the squared angle, to obtain a speed of 1:
+                    // subtract Math.sin(dot_angle)**2 (then adjust dir!)!
+                    // vy: Math.sin(dot_angle) * 1, // Math.sin(Math.random() * Math.PI/4),
+                    // Set latter to 0 to have no degree error.
+                    // Increase speed through multiplication!
+                    col: "rgb(255,155,55)",
+
+                });
+
+                console.log(def_balls);
+
+                draw(ctx_def, def_balls);
+            }
+
+            click = true;
         }
 
-        // If no ball was updated:
-        if (!ball_updated) {
-            console.log("No balls updated -- will create one");
-            // Add a ball (currently for demonstration only):
-            // let dot_angle = (i < noise) ? Math.random() * Math.PI * 2 : (Math.random() - 0.5) * Math.PI / 2;
-
-            // Ensure bins:
-            console.log(bins_w);
-            const xpos = bins_w.reduce(function (prev, curr) {
-                return (Math.abs(curr - mouse.x) < Math.abs(prev - mouse.x) ? curr : prev);
-            });
-            const ypos = bins_v.reduce(function (prev, curr) {
-                return (Math.abs(curr - mouse.y) < Math.abs(prev - mouse.y) ? curr : prev);
-            });
-
-            def_balls.push({
-                // Initiate at mouse position:
-                // x: mouse.x,
-                // y: mouse.y,
-                x: xpos,
-                y: ypos,
-
-                // vx: ((i < noise) ? Math.cos(dot_angle) : (dot_right * (1 - Math.sin(dot_angle) ** 2))) * 1,
-                // subtract the squared angle, to obtain a speed of 1:
-                // subtract Math.sin(dot_angle)**2 (then adjust dir!)!
-                // vy: Math.sin(dot_angle) * 1, // Math.sin(Math.random() * Math.PI/4),
-                // Set latter to 0 to have no degree error.
-                // Increase speed through multiplication!
-                col: "rgb(255,155,55)",
-
-            });
-
-            console.log(def_balls);
-
-            draw(ctx_def, def_balls);
-        }
-
-        click = true;
     });
     document.addEventListener("mouseup", (e) => {
         click = false;
