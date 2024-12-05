@@ -39,6 +39,8 @@
 
     let finished_x = new Array(bins_w.length).fill(h - target_ht);
 
+    let part2 = false;  // defenses part ready?
+
     // Build a distribution:
 
     // Limited range of bins
@@ -79,7 +81,7 @@
             // subtract the squared angle, to obtain a speed of 1:
             // subtract Math.sin(dot_angle)**2 (then adjust dir!)!
             // y-velocity (falling speed):
-            vy: 2, // Math.sin(Math.random() * Math.PI/4),
+            vy: 20, // Math.sin(Math.random() * Math.PI/4),
             // Speed is not necessarily the problem but how well it maps onto the pixels!
             // 10 works, 4 works, 2 works...
             // 380/8, for instance does not work
@@ -183,7 +185,8 @@
 
                 // Draw on background if persistent:
                 if (persistent) {
-                    draw(ctx_fin, finished_balls, 0.5);  // make them transparent.
+                    // draw(ctx_fin, finished_balls, 0.5);  // make them transparent.
+                    draw(ctx_fin, finished_balls, 1);
                     // Update location count:
                     finished_x[bins_w.indexOf(landed[0].x)] -= target_ht;
                 }
@@ -225,7 +228,14 @@
                 update();
                 // Draw the active balls:
                 draw(ctx_hit, active_balls);
-            }
+            } else {
+                    // Trigger part 2
+                    // TODO: Provide instructions!
+                    // TODO: Should be on new page in experiment!
+                    alert("Now set your defenses!");
+                    part2 = true;
+                    def_canvas.style.zIndex = "3";  // bring to front.
+                }
 
         });
     })
@@ -280,7 +290,7 @@
                 }
 
                 // If no ball was updated:
-                if (!ball_updated) {
+                if (part2) {
                     console.log("No balls updated -- will create one");
                     // Add a ball (currently for demonstration only):
                     // let dot_angle = (i < noise) ? Math.random() * Math.PI * 2 : (Math.random() - 0.5) * Math.PI / 2;
