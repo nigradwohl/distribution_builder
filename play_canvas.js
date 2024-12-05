@@ -22,9 +22,12 @@
 
     const target_ht = 20;  // height of targets.
     const target_wd = target_ht;
+    const circle = false;
 
-    const bins_w = Array.from({length: w / target_wd}, (_, i) => target_wd * i);  // w / target_ht;  // TODO: Move up.
-    const bins_v = Array.from({length: h / target_ht}, (_, i) => 0 + target_ht * i);  // w / target_ht;  // TODO: Move up.
+    // For circles:
+    const addconst = circle ? target_ht / 2 : 0;
+    const bins_w = Array.from({length: w / target_wd}, (_, i) => addconst + target_wd * i);  // w / target_ht;
+    const bins_v = Array.from({length: h / target_ht}, (_, i) => addconst + target_ht * i);  // w / target_ht;
 
 // current dots
     let balls = [];
@@ -84,14 +87,20 @@
             ctx.beginPath();
             // Sizes are in pixels!
             // Dot:
-            // ctx.arc(dot.x, dot.y, target_ht, 0, Math.PI * 2, false);  // third parameter controls size (radius).
-            // Rectangle:
-            ctx.rect(dot.x, dot.y, target_wd, target_ht);  // third parameter controls size.
+            if (circle) {
+                ctx.arc(dot.x, dot.y, target_wd / 2, 0, Math.PI * 2, false);  // third parameter controls size (radius).
+            } else {
+                // Rectangle:
+                ctx.rect(dot.x, dot.y, target_wd, target_ht);  // third parameter controls size.
+            }
+
+            ctx.fillStyle = dot.col;
+            ctx.fill();
+
             // ctx.fillStyle = (j > noise) ? "rgb(0,0,0)" : "#fff";  // different dots (good for testing)
             // noise dots unfilled.
             // ctx.fillStyle = "rgb(0,0,0)";
-            ctx.fillStyle = dot.col;
-            ctx.fill();
+
             // ctx.strokeStyle = 'black';  // stroke for those with noise.
             // (j < noise) ? ctx.stroke() : '';
 
@@ -100,7 +109,23 @@
             ctx.fillStyle = "black";
             ctx.textBaseline = "middle";  // vertical
             ctx.textAlign = "center";  // horizontal
-            ctx.fillText(dot.dnum, dot.x + target_wd / 2, dot.y + target_ht / 2);
+
+            if (circle) {
+                ctx.fillText(dot.dnum, dot.x, dot.y);
+            } else {
+                // Rectangle:
+                ctx.fillText(dot.dnum, dot.x + target_wd / 2, dot.y + target_ht / 2);
+            }
+
+
+            // ctx.fillText(dot.dnum, dot.x, dot.y);
+
+            // Rectangle:
+            // ctx.fillText(dot.dnum, dot.x + target_wd / 2, dot.y + target_ht / 2);
+
+
+            // For dots:
+
         }
 
     }
@@ -122,7 +147,7 @@
 
             // if (dot.y < h - target_ht && dot.y < finished_x[bins_w.indexOf(dot.x)]) {
             if (dot.y < n_xbin) {
-                // If dot has not finsihed, add its velocity
+                // If dot has not finished, add its velocity
                 dot.y += dot.vy;
             } else {
                 // For final dot:
