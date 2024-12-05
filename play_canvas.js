@@ -46,6 +46,8 @@
 
     let part2 = false;  // defenses part ready?
 
+    let score = 0;
+
     // Build a distribution:
 
     // Limited range of bins
@@ -306,7 +308,12 @@
                     return cur.x === dot.x
                 })
 
-                def_balls.splice(pos_ix, 1);
+                if(pos_ix > -1){
+                    def_balls.splice(pos_ix, 1);
+                } else {
+                    score--;
+                }
+
 
                 console.log("Position indices");
                 console.log(pos_ix);
@@ -467,6 +474,10 @@
                     if (ndef === 0) {
                         alert("Click to start testing your predictions!");
 
+                        // Remove the previous balls:
+                        ctx_fin.clearRect(0, 0, w, h);
+
+                        // Generate the first balls:
                         firstball = testballs.shift();
                         active_balls.push(firstball);
 
