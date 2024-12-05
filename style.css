@@ -27,13 +27,13 @@ p {
 }
 
 #game-container {
-    height: 400px;
-    width: 800px;
+    height: 500px;
+    width: 1000px;
 }
 
 canvas {
-    height: 400px;
-    width: 800px;
+    height: 500px;
+    width: 1000px;
 }
 
 button {

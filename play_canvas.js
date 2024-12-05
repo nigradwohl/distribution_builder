@@ -15,8 +15,8 @@
     const ctx_def = def_canvas.getContext('2d');
     const ctx_fin = stat_canvas.getContext('2d');
     // Set width of canvas:
-    const w = hit_canvas.width = def_canvas.width = stat_canvas.width = 800;  // window.innerWidth;
-    const h = hit_canvas.height = def_canvas.height = stat_canvas.height = 400;  // window.innerHeight;
+    const w = hit_canvas.width = def_canvas.width = stat_canvas.width = 1000;  // window.innerWidth;
+    const h = hit_canvas.height = def_canvas.height = stat_canvas.height = 500;  // window.innerHeight;
     // c.style.backgroundColor = 'black';
     // Fixed values ensure equal height and width of points.
 
@@ -213,6 +213,7 @@
             // }
         }
     }
+
 
 
     // loop the animation
