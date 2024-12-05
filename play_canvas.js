@@ -15,15 +15,16 @@
     const ctx_def = def_canvas.getContext('2d');
     const ctx_fin = stat_canvas.getContext('2d');
     // Set width of canvas:
-    const w = hit_canvas.width = def_canvas.width = stat_canvas.width = 400;  // window.innerWidth;
-    const h = hit_canvas.height = def_canvas.height = stat_canvas.height = 400;  // window.innerHeight;
+    const w = hit_canvas.width = def_canvas.width = stat_canvas.width = 800;  // window.innerWidth;
+    const h = hit_canvas.height = def_canvas.height = stat_canvas.height = 600;  // window.innerHeight;
     // c.style.backgroundColor = 'black';
     // Fixed values ensure equal height and width of points.
 
-    const target_wd = 20;  // width of targets.
+    const target_ht = 20;  // height of targets.
+    const target_wd = target_ht * h/w;
 
-    const bins_w = Array.from({length: w / target_wd}, (_, i) => target_wd + target_wd * i);  // w / target_wd;  // TODO: Move up.
-    const bins_v = Array.from({length: h / target_wd}, (_, i) => target_wd + target_wd * i);  // w / target_wd;  // TODO: Move up.
+    const bins_w = Array.from({length: w / target_wd}, (_, i) => target_wd + target_wd * i);  // w / target_ht;  // TODO: Move up.
+    const bins_v = Array.from({length: h / target_ht}, (_, i) => target_ht + target_ht * i);  // w / target_ht;  // TODO: Move up.
 
 // current dots
     let balls = [];
@@ -31,7 +32,7 @@
     let finished_balls = [];
     let def_balls = [];
 
-    let finished_x = new Array(bins_w.length).fill(h - target_wd);
+    let finished_x = new Array(bins_w.length).fill(h - target_ht);
 
     // var total = js_vars.n_dots;  // number of balls.
     // var noise = js_vars.dot_noise * total; // number of noise balls (t gives the fraction!)
@@ -52,7 +53,7 @@
             // subtract the squared angle, to obtain a speed of 1:
             // subtract Math.sin(dot_angle)**2 (then adjust dir!)!
             // y-velocity (falling speed):
-            vy: 10, // Math.sin(Math.random() * Math.PI/4),
+            vy: 20, // Math.sin(Math.random() * Math.PI/4),
             // Speed is not necessarily the problem but how well it maps onto the pixels!
             // 10 works, 4 works, 2 works...
             // 380/8, for instance does not work
@@ -83,9 +84,9 @@
             ctx.beginPath();
             // Sizes are in pixels!
             // Dot:
-            // ctx.arc(dot.x, dot.y, target_wd, 0, Math.PI * 2, false);  // third parameter controls size (radius).
+            // ctx.arc(dot.x, dot.y, target_ht, 0, Math.PI * 2, false);  // third parameter controls size (radius).
             // Rectangle:
-            ctx.rect(dot.x, dot.y, target_wd, target_wd);  // third parameter controls size.
+            ctx.rect(dot.x, dot.y, target_wd, target_ht);  // third parameter controls size.
             // ctx.fillStyle = (j > noise) ? "rgb(0,0,0)" : "#fff";  // different dots (good for testing)
             // noise dots unfilled.
             // ctx.fillStyle = "rgb(0,0,0)";
@@ -99,7 +100,7 @@
             ctx.fillStyle = "black";
             ctx.textBaseline = "middle";  // vertical
             ctx.textAlign = "center";  // horizontal
-            ctx.fillText(dot.dnum,dot.x + target_wd/2, dot.y + target_wd/2);
+            ctx.fillText(dot.dnum,dot.x + target_wd/2, dot.y + target_ht/2);
         }
 
     }
@@ -119,7 +120,7 @@
             const n_xbin = finished_x[bins_w.indexOf(dot.x)];  // Deterine up to which position targets are filled.
             // console.log(`Bin of current dots already has targets until ${n_xbin}`);
 
-            // if (dot.y < h - target_wd && dot.y < finished_x[bins_w.indexOf(dot.x)]) {
+            // if (dot.y < h - target_ht && dot.y < finished_x[bins_w.indexOf(dot.x)]) {
             if (dot.y < n_xbin) {
                 // If dot has not finsihed, add its velocity
                 dot.y += dot.vy;
@@ -133,7 +134,7 @@
                 draw(ctx_fin, finished_balls);
                 // Update location count:
                 // TODO: Only do so if targets are persistent!
-                finished_x[bins_w.indexOf(landed[0].x)] -= target_wd;
+                finished_x[bins_w.indexOf(landed[0].x)] -= target_ht;
                 console.log("Finished balls:");
                 console.log(finished_balls);
                 console.log(finished_x);  // Show finish locations.
@@ -141,8 +142,8 @@
 
             // Add a new ball after the half:
             // if (dot.y === h / 2) {
-            // if (dot.y === h - 2 * target_wd - n_xbin) {  // or later.
-            if (dot.y >= n_xbin - 2 * target_wd && !dot.triggered_new) {  // or later.
+            // if (dot.y === h - 2 * target_ht - n_xbin) {  // or later.
+            if (dot.y >= n_xbin - 2 * target_ht && !dot.triggered_new) {  // or later.
                 if (balls.length > 0) {  // If enough balls are left.
                     // Check if balls are left:
                     console.log(balls);
@@ -194,12 +195,12 @@
         const pad_hitzone = 5;  // Padding of the hitzone.
 
         // TODO: Ensure that the current ball is targeted!
-        // console.log(`Current difference: ${Math.abs(mouse.x - balls[0].x)}; Tolerance: ${pad_hitzone + target_wd / 2}`);
+        // console.log(`Current difference: ${Math.abs(mouse.x - balls[0].x)}; Tolerance: ${pad_hitzone + target_ht / 2}`);
 
         // Check all active balls:
         let ixb;
         let ball_updated = false;
-        const tol = (pad_hitzone + target_wd / 2);  // tolerance.
+        const tol = (pad_hitzone + target_ht / 2);  // tolerance.
         for (ixb = 0; ixb < active_balls.length; ixb++) {
             if (Math.abs(mouse.x - active_balls[ixb].x) <= tol &&
                 Math.abs(mouse.y - active_balls[ixb].y) <= tol) {
