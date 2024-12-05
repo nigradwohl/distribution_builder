@@ -330,18 +330,26 @@
                     console.log("Bin arrays:");
                     console.log(bins_w);
                     console.log(bins_v);
-                    const xpos = bins_w.reduce(function (prev, curr) {
-                        return (Math.abs(curr - mouse.x) < Math.abs(prev - mouse.x) ? curr : prev);
-                    });
+                    // const xpos = bins_w.reduce(function (prev, curr) {
+                    //     return (Math.abs(curr - mouse.x) < Math.abs(prev - mouse.x) ? curr : prev);
+                    // });
+
+                    const xpos = bins_w.filter(function(cur, ix){return mouse.x >= cur && mouse.x < bins_w[ix + 1]})[0]
+                    // mouse.x >= bins_w[i] && mouse.x < bins_w[i + 1]
+
 
                     // const ypos = bins_v.reduce(function (prev, curr) {
                     //     return (Math.abs(curr - mouse.y) < Math.abs(prev - mouse.y) ? curr : prev);
                     // });
 
                     // Determine y:
+                    // console.log(bins_w.indexOf(xpos));
                     const n_xbin = defenses_x[bins_w.indexOf(xpos)];  // Determine up to which position targets are filled.
                     console.log(`${n_xbin} defenses in bin`);
+
                     if (n_xbin > 0) {
+
+                        // Update y position:
                         const ypos = defenses_x[bins_w.indexOf(xpos)] -= target_ht;
 
 
