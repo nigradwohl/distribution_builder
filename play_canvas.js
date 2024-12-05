@@ -16,7 +16,7 @@
     const ctx_fin = stat_canvas.getContext('2d');
     // Set width of canvas:
     const w = hit_canvas.width = def_canvas.width = stat_canvas.width = 1000;  // window.innerWidth;
-    const h = hit_canvas.height = def_canvas.height = stat_canvas.height = 500;  // window.innerHeight;
+    const h = hit_canvas.height = def_canvas.height = stat_canvas.height = 400;  // window.innerHeight;
     // c.style.backgroundColor = 'black';
     // Fixed values ensure equal height and width of points.
 
@@ -215,18 +215,20 @@
     }
 
 
+    document.getElementById("start-btn").addEventListener("click", function () {
+        // loop the animation
+        requestAnimationFrame(function loop() {
+            // As long as there are active balls:
+            if (active_balls.length > 0) {
+                requestAnimationFrame(loop);
+                update();
+                // Draw the active balls:
+                draw(ctx_hit, active_balls);
+            }
 
-    // loop the animation
-    requestAnimationFrame(function loop() {
-        // As long as there are active balls:
-        if (active_balls.length > 0) {
-            requestAnimationFrame(loop);
-            update();
-            // Draw the active balls:
-            draw(ctx_hit, active_balls);
-        }
+        });
+    })
 
-    });
 
     // Add mouse stuff:
     let click = false;  // TODO: Needed?
