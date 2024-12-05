@@ -56,15 +56,19 @@
     <!--    TODO: Use different layers of canvas to avoid updating all elements-->
     <div>
         <div id="game-container" style="position: relative;">
-            <!--        A static layer for displaying balls that are no longer active (when persistent):-->
-            <canvas id="static-layer"
-                    style="position: absolute; left: 0; top: 0; z-index: 0;background-color: #373737"></canvas>
+
             <!--        A hit layer for targets that can be clicked-->
             <canvas id="hit-layer"
-                    style="position: absolute; left: 0; top: 0; z-index: 2;background-color: transparent"></canvas>
+                    style="position: absolute; left: 0; top: 0; z-index: 3;background-color: transparent"></canvas>
             <!--        A defense layer for generating predictions-->
             <canvas id="defense-layer"
+                    style="position: absolute; left: 0; top: 0; z-index: 2;background-color: transparent"></canvas>
+            <!--        A finished layer for displaying balls that are no longer active (when persistent):-->
+            <canvas id="finish-layer"
                     style="position: absolute; left: 0; top: 0; z-index: 1;background-color: transparent"></canvas>
+            <!--        A static layer for displaying bottom etc.:-->
+            <canvas id="static-layer"
+                    style="position: absolute; left: 0; top: 0; z-index: 0;background-color: #373737"></canvas>
         </div>
     </div>
 

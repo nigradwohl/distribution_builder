@@ -9,14 +9,16 @@
     'use strict';
     const hit_canvas = document.getElementById('hit-layer');
     const def_canvas = document.getElementById('defense-layer');
-    const stat_canvas = document.getElementById('static-layer');
+    const fin_canvas = document.getElementById('finish-layer');
+    const sta_canvas = document.getElementById('static-layer');
     // var t = document.getElementById('t');
     const ctx_hit = hit_canvas.getContext('2d');
     const ctx_def = def_canvas.getContext('2d');
-    const ctx_fin = stat_canvas.getContext('2d');
+    const ctx_fin = fin_canvas.getContext('2d');
+    const ctx_sta = sta_canvas.getContext('2d');
     // Set width of canvas:
-    const w = hit_canvas.width = def_canvas.width = stat_canvas.width = 1000;  // window.innerWidth;
-    const h = hit_canvas.height = def_canvas.height = stat_canvas.height = 400;  // window.innerHeight;
+    const w = hit_canvas.width = def_canvas.width = fin_canvas.width = sta_canvas.width  = 1000;  // window.innerWidth;
+    const h = hit_canvas.height = def_canvas.height = fin_canvas.height = sta_canvas.height = 400;  // window.innerHeight;
     // c.style.backgroundColor = 'black';
     // Fixed values ensure equal height and width of points.
 
@@ -29,7 +31,7 @@
     // For circles:
     const addconst = circle ? target_ht / 2 : 0;
     const bins_w = Array.from({length: w / target_wd}, (_, i) => addconst + target_wd * i);  // w / target_ht;
-    const bins_v = Array.from({length: h / target_ht}, (_, i) => addconst + target_ht * i);  // w / target_ht;
+    const bins_v = Array.from({length: h / target_ht - 1}, (_, i) => addconst + target_ht * i);  // w / target_ht;
 
 // current dots
     let balls = [];
@@ -102,8 +104,14 @@
     active_balls.push(firstball);
     console.log(active_balls);
 
+    // Draw bottom in static layer:
+    ctx_sta.clearRect(0, 0, w, h);
+    ctx_sta.rect(0, h - target_ht, w, target_ht);  // third parameter controls size.
+    ctx_sta.fillStyle = "darkgreen";
+    ctx_sta.fill();
+
 // draw all balls each frame
-    function draw(ctx, target_arr, alpha=1) {
+    function draw(ctx, target_arr, alpha = 1) {
         // console.log("Drawing!");
         ctx.clearRect(0, 0, w, h);
         let j, dot;
@@ -172,7 +180,7 @@
             // console.log(`Bin of current dots already has targets until ${n_xbin}`);
 
             // if (dot.y < h - target_ht && dot.y < finished_x[bins_w.indexOf(dot.x)]) {
-            if (dot.y < n_xbin) {
+            if (dot.y < n_xbin - target_ht) {
                 // If dot has not finished, add its velocity
                 dot.y += dot.vy;
             } else {
@@ -229,13 +237,13 @@
                 // Draw the active balls:
                 draw(ctx_hit, active_balls);
             } else {
-                    // Trigger part 2
-                    // TODO: Provide instructions!
-                    // TODO: Should be on new page in experiment!
-                    alert("Now set your defenses!");
-                    part2 = true;
-                    def_canvas.style.zIndex = "3";  // bring to front.
-                }
+                // Trigger part 2
+                // TODO: Provide instructions!
+                // TODO: Should be on new page in experiment!
+                alert("Now set your defenses!");
+                part2 = true;
+                def_canvas.style.zIndex = "3";  // bring to front.
+            }
 
         });
     })
