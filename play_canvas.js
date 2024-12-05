@@ -17,7 +17,7 @@
     const ctx_fin = fin_canvas.getContext('2d');
     const ctx_sta = sta_canvas.getContext('2d');
     // Set width of canvas:
-    const w = hit_canvas.width = def_canvas.width = fin_canvas.width = sta_canvas.width  = 1000;  // window.innerWidth;
+    const w = hit_canvas.width = def_canvas.width = fin_canvas.width = sta_canvas.width = 1000;  // window.innerWidth;
     const h = hit_canvas.height = def_canvas.height = fin_canvas.height = sta_canvas.height = 400;  // window.innerHeight;
     // c.style.backgroundColor = 'black';
     // Fixed values ensure equal height and width of points.
@@ -40,6 +40,7 @@
     let def_balls = [];
 
     let finished_x = new Array(bins_w.length).fill(h - target_ht);
+    let defenses_x = new Array(bins_w.length).fill(h - target_ht);
 
     let part2 = false;  // defenses part ready?
 
@@ -62,7 +63,7 @@
 
     // var total = js_vars.n_dots;  // number of balls.
     // var noise = js_vars.dot_noise * total; // number of noise balls (t gives the fraction!)
-    let total = 100;
+    let total = 10;
     const noise = 0;
     const dot_right = true;
     // console.log("current noise: " + noise);
@@ -226,6 +227,20 @@
         }
     }
 
+    function draw_triangle(x_start) {
+
+        console.log(x_start);
+        const ctx = ctx_sta;
+        const pad = 0.2 * target_ht;
+
+        ctx.beginPath();
+        ctx.moveTo(x_start + pad, h - pad);
+        ctx.lineTo(x_start + target_wd / 2, h - target_ht + pad);
+        ctx.lineTo(x_start + target_wd - pad, h - pad);
+        ctx.fillStyle = "black";
+        ctx.fill();
+    }
+
 
     document.getElementById("start-btn").addEventListener("click", function () {
         // loop the animation
@@ -243,6 +258,14 @@
                 alert("Now set your defenses!");
                 part2 = true;
                 def_canvas.style.zIndex = "3";  // bring to front.
+
+                // Draw arrows on static layer:
+                console.log("Drawing arrows...");
+                let i;
+                for (i = 0; i < bins_w.length; i++) {
+                    draw_triangle(bins_w[i]);
+                }
+
             }
 
         });
@@ -298,8 +321,8 @@
                 }
 
                 // If no ball was updated:
-                if (part2) {
-                    console.log("No balls updated -- will create one");
+                if (part2 && mouse.y > h - target_ht) {
+                    // console.log("No balls updated -- will create one");
                     // Add a ball (currently for demonstration only):
                     // let dot_angle = (i < noise) ? Math.random() * Math.PI * 2 : (Math.random() - 0.5) * Math.PI / 2;
 
@@ -307,29 +330,39 @@
                     console.log("Bin arrays:");
                     console.log(bins_w);
                     console.log(bins_v);
-                    const ypos = bins_v.reduce(function (prev, curr) {
-                        return (Math.abs(curr - mouse.y) < Math.abs(prev - mouse.y) ? curr : prev);
-                    });
                     const xpos = bins_w.reduce(function (prev, curr) {
                         return (Math.abs(curr - mouse.x) < Math.abs(prev - mouse.x) ? curr : prev);
                     });
 
+                    // const ypos = bins_v.reduce(function (prev, curr) {
+                    //     return (Math.abs(curr - mouse.y) < Math.abs(prev - mouse.y) ? curr : prev);
+                    // });
 
-                    def_balls.push({
-                        // Initiate at mouse position:
-                        // x: mouse.x,
-                        // y: mouse.y,
-                        x: xpos,
-                        y: ypos,
-                        col: "rgb(255,155,55)",
-                        dnum: "d",
+                    // Determine y:
+                    const n_xbin = defenses_x[bins_w.indexOf(xpos)];  // Determine up to which position targets are filled.
+                    console.log(`${n_xbin} defenses in bin`);
+                    if (n_xbin > 0) {
+                        const ypos = defenses_x[bins_w.indexOf(xpos)] -= target_ht;
 
-                    });
 
-                    console.log("CReated defense balls:");
-                    console.log(def_balls);
+                        def_balls.push({
+                            // Initiate at mouse position:
+                            // x: mouse.x,
+                            // y: mouse.y,
+                            x: xpos,
+                            y: ypos,
+                            col: "rgb(255,155,55)",
+                            dnum: "d",
 
-                    draw(ctx_def, def_balls);
+                        });
+
+
+                        console.log("CReated defense balls:");
+                        console.log(def_balls);
+
+                        draw(ctx_def, def_balls);
+                    }
+
                 }
 
                 click = true;
