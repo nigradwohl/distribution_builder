@@ -79,7 +79,7 @@
             // subtract the squared angle, to obtain a speed of 1:
             // subtract Math.sin(dot_angle)**2 (then adjust dir!)!
             // y-velocity (falling speed):
-            vy: 20, // Math.sin(Math.random() * Math.PI/4),
+            vy: 2, // Math.sin(Math.random() * Math.PI/4),
             // Speed is not necessarily the problem but how well it maps onto the pixels!
             // 10 works, 4 works, 2 works...
             // 380/8, for instance does not work
@@ -243,73 +243,78 @@
             console.log("~~~~~~~~~~~~~~ LEFT MOUSE CLILCKED ~~~~~~~~~~~~~");
             console.log("Bounding box:");
             console.log(boundingBox);
-            mouse.x = e.clientX - boundingBox.left;
-            mouse.y = e.clientY - boundingBox.top;
-
-            // TODO: Check if mouse is within canvas!
-
-            console.log("Mouse position:");
-            console.log(mouse);
-            console.log("Active balls:");
-            console.log(active_balls);
 
             // Add a bit of padding:
             const pad_hitzone = 5;  // Padding of the hitzone.
 
-            // TODO: Ensure that the current ball is targeted!
-            // console.log(`Current difference: ${Math.abs(mouse.x - balls[0].x)}; Tolerance: ${pad_hitzone + target_ht / 2}`);
+            mouse.x = e.clientX - boundingBox.left;
+            mouse.y = e.clientY - boundingBox.top;
 
-            // Check all active balls:
-            let ixb;
-            let ball_updated = false;
-            const tol_y = (pad_hitzone + target_ht / 2);  // tolerance in y.
-            const tol_x = (pad_hitzone + target_wd / 2);  // tolerance in x.
-            for (ixb = 0; ixb < active_balls.length; ixb++) {
-                if (Math.abs(mouse.x - active_balls[ixb].x) <= tol_x &&
-                    Math.abs(mouse.y - active_balls[ixb].y) <= tol_y) {
-                    console.log("Change ball!");
-                    active_balls[ixb].col = "rgb(155,55,255)";  // Define a new color for the ball!
-                    draw(ctx_hit, active_balls);  // Do the updating!
-                    ball_updated = true;
+            // TODO: Check if mouse is within canvas!
+            if (mouse.x > 0 && mouse.y > 0 && e.clientX < boundingBox.right && e.clientY < boundingBox.bottom) {
+                console.log("Mouse position:");
+                console.log(mouse);
+                console.log("Active balls:");
+                console.log(active_balls);
+
+
+                // TODO: Ensure that the current ball is targeted!
+                // console.log(`Current difference: ${Math.abs(mouse.x - balls[0].x)}; Tolerance: ${pad_hitzone + target_ht / 2}`);
+
+                // Check all active balls:
+                let ixb;
+                let ball_updated = false;
+                const tol_y = (pad_hitzone + target_ht / 2);  // tolerance in y.
+                const tol_x = (pad_hitzone + target_wd / 2);  // tolerance in x.
+                for (ixb = 0; ixb < active_balls.length; ixb++) {
+                    if (Math.abs(mouse.x - active_balls[ixb].x) <= tol_x &&
+                        Math.abs(mouse.y - active_balls[ixb].y) <= tol_y) {
+                        console.log("Change ball!");
+                        active_balls[ixb].col = "rgb(155,55,255)";  // Define a new color for the ball!
+                        draw(ctx_hit, active_balls);  // Do the updating!
+                        ball_updated = true;
+                    }
                 }
+
+                // If no ball was updated:
+                if (!ball_updated) {
+                    console.log("No balls updated -- will create one");
+                    // Add a ball (currently for demonstration only):
+                    // let dot_angle = (i < noise) ? Math.random() * Math.PI * 2 : (Math.random() - 0.5) * Math.PI / 2;
+
+                    // Ensure bins:
+                    console.log("Bin arrays:");
+                    console.log(bins_w);
+                    console.log(bins_v);
+                    const ypos = bins_v.reduce(function (prev, curr) {
+                        return (Math.abs(curr - mouse.y) < Math.abs(prev - mouse.y) ? curr : prev);
+                    });
+                    const xpos = bins_w.reduce(function (prev, curr) {
+                        return (Math.abs(curr - mouse.x) < Math.abs(prev - mouse.x) ? curr : prev);
+                    });
+
+
+                    def_balls.push({
+                        // Initiate at mouse position:
+                        // x: mouse.x,
+                        // y: mouse.y,
+                        x: xpos,
+                        y: ypos,
+                        col: "rgb(255,155,55)",
+                        dnum: "d",
+
+                    });
+
+                    console.log("CReated defense balls:");
+                    console.log(def_balls);
+
+                    draw(ctx_def, def_balls);
+                }
+
+                click = true;
             }
 
-            // If no ball was updated:
-            if (!ball_updated) {
-                console.log("No balls updated -- will create one");
-                // Add a ball (currently for demonstration only):
-                // let dot_angle = (i < noise) ? Math.random() * Math.PI * 2 : (Math.random() - 0.5) * Math.PI / 2;
 
-                // Ensure bins:
-                console.log("Bin arrays:");
-                console.log(bins_w);
-                console.log(bins_v);
-                const ypos = bins_v.reduce(function (prev, curr) {
-                    return (Math.abs(curr - mouse.y) < Math.abs(prev - mouse.y) ? curr : prev);
-                });
-                const xpos = bins_w.reduce(function (prev, curr) {
-                    return (Math.abs(curr - mouse.x) < Math.abs(prev - mouse.x) ? curr : prev);
-                });
-
-
-                def_balls.push({
-                    // Initiate at mouse position:
-                    // x: mouse.x,
-                    // y: mouse.y,
-                    x: xpos,
-                    y: ypos,
-                    col: "rgb(255,155,55)",
-                    dnum: "d",
-
-                });
-
-                console.log("CReated defense balls:");
-                console.log(def_balls);
-
-                draw(ctx_def, def_balls);
-            }
-
-            click = true;
         }
 
     });
