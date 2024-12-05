@@ -101,7 +101,7 @@
     console.log(active_balls);
 
 // draw all balls each frame
-    function draw(ctx, target_arr) {
+    function draw(ctx, target_arr, alpha=1) {
         // console.log("Drawing!");
         ctx.clearRect(0, 0, w, h);
         let j, dot;
@@ -118,6 +118,7 @@
             }
 
             ctx.fillStyle = dot.col;
+            ctx.globalAlpha = alpha;  // enable transparency.
             ctx.fill();
 
             // ctx.fillStyle = (j > noise) ? "rgb(0,0,0)" : "#fff";  // different dots (good for testing)
@@ -182,7 +183,7 @@
 
                 // Draw on background if persistent:
                 if (persistent) {
-                    draw(ctx_fin, finished_balls);
+                    draw(ctx_fin, finished_balls, 0.5);  // make them transparent.
                     // Update location count:
                     finished_x[bins_w.indexOf(landed[0].x)] -= target_ht;
                 }
@@ -240,17 +241,15 @@
 
     document.addEventListener("mousedown", (e) => {
         if (e.buttons === 1) {  // only for left mouse button!
-            console.log("~~~~~~~~~~~~~~ LEFT MOUSE CLILCKED ~~~~~~~~~~~~~");
+            console.log("~~~~~~~~~~~~~~ LEFT MOUSE CLICKED ~~~~~~~~~~~~~");
             console.log("Bounding box:");
             console.log(boundingBox);
 
-            // Add a bit of padding:
-            const pad_hitzone = 5;  // Padding of the hitzone.
-
+            // Positions relative to the canvas (from the top left corner):
             mouse.x = e.clientX - boundingBox.left;
             mouse.y = e.clientY - boundingBox.top;
 
-            // TODO: Check if mouse is within canvas!
+            // Check if mouse is within canvas!
             if (mouse.x > 0 && mouse.y > 0 && e.clientX < boundingBox.right && e.clientY < boundingBox.bottom) {
                 console.log("Mouse position:");
                 console.log(mouse);
@@ -262,6 +261,10 @@
                 // console.log(`Current difference: ${Math.abs(mouse.x - balls[0].x)}; Tolerance: ${pad_hitzone + target_ht / 2}`);
 
                 // Check all active balls:
+
+                // Add a bit of padding:
+                const pad_hitzone = 5;  // Padding of the hitzone.
+
                 let ixb;
                 let ball_updated = false;
                 const tol_y = (pad_hitzone + target_ht / 2);  // tolerance in y.
