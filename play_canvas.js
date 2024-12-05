@@ -96,7 +96,7 @@
             // (j < noise) ? ctx.stroke() : '';
 
             // Add text (for debugging):
-            ctx.font = "14px Arial";
+            ctx.font = "12px Arial";
             ctx.fillStyle = "black";
             ctx.textBaseline = "middle";  // vertical
             ctx.textAlign = "center";  // horizontal
